@@ -1,9 +1,13 @@
 <!DOCTYPE html>
 <head>
-<title>login page</title>
+    <title>{$title}</title>
 </head>
 <body>
-    <div>hello,this is login test page!</div>
-    <div>{$full}</div>
+    <form name="form1" action="{:url('Index/loginHandle')}" method ="post">
+        <div><label>用户名:</label><input name="username" type="text" /></div>
+        <div><label>密  码：</label><input name="password" type="password" /></div>
+        <div><label><input type="submit" value="确认登陆"/></label>
+            <label><input type="reset" value="取消登陆"/></label></div>
+    </form>
 </body>
 </html>

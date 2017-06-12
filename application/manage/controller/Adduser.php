@@ -28,7 +28,9 @@
                    'username' => $username,
                     'password' => $hashedPassword,
                 ));
-                if($setRes == 'OK'){
+                //设置用户名与用户ID对应
+                $Res = $redis -> hset("username.to.id",$username,$userID);
+                if($setRes == 'OK' && $Res == 1){
                     return '用户添加成功！';
                 }
             }
