@@ -4,7 +4,7 @@
     
     class Weixin extends Controller{
         public function index(){
-            $str = '服务器连接成功！';
+            $str = '远端服务器连接成功！';
             return $str;
         }
     }
