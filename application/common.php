@@ -22,3 +22,34 @@ function bcryptHash($rowPassword,$round =8){
 function bcryptVerfy($rowPassword,$storedHash){
     return crypt($rowPassword,$storedHash) == $storedHash;
 }
+
+
+function httpGet($url){
+    $curl = curl_init();
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($curl, CURLOPT_TIMEOUT,500);
+    curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, true);
+    curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 2);
+    curl_setopt($curl, CURLOPT_URL, $url);
+    $res = curl_exec($curl);
+    curl_close($curl);
+    return $res;
+}
+
+function randomFromDev($len) {
+    $fp = @fopen('/dev/urandom','rb');
+    $result = '';
+    if ($fp !== FALSE) {
+        $result .= @fread($fp, $len);
+        @fclose($fp);
+    }
+    else{
+        trigger_error('Can not open /dev/urandom.');
+    }
+    // convert from binary to string
+    $result = base64_encode($result);
+    // remove none url chars
+    $result = strtr($result, '+/', '-_');
+    return substr($result, 0, $len);
+}
+
