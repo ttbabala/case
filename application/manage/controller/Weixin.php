@@ -45,9 +45,8 @@ use think\Controller;
                 if($signature == $signature2){
                    $pc = new Wxbizdatacrypt($appid,$sessionKey);
                    $errcode = $pc ->decryptData($encryptedData, $iv, $data);
-                   return $errcode;
                    if( $errcode == 0 ){
-                       return $data;
+                       return json_decode($data);
                     }else{
                        return $errcode;
                     }
