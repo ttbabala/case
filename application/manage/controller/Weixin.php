@@ -1,11 +1,13 @@
 <?php
   namespace app\manage\controller;
   vendor('predis.autoload');
+  vendor('qiniu.autoload');
   use wx\Wxbizdatacrypt;
   use think\Request;
   use think\Cache;
   use think\Controller;
   use think\cache\driver\Redis;
+  use Qiniu\Auth;
 
     class Weixin extends Controller{
         public function index(){
@@ -22,7 +24,7 @@
         public function codeGetSession3rd(){
             $Request = Request::instance();
             $code = $Request -> get('code');
-            if(isset($code) && $code!= ''){
+            if(isset($code) && $code!== ''){
                 $appid = 'wxe41c158180274a2c'; 
                 $AppSecret = '54daf7bc72b36c7fedc1ee529988da36';
                 $api = "https://api.weixin.qq.com/sns/jscode2session?appid=$appid&secret=$AppSecret&js_code=$code&grant_type=authorization_code";
@@ -32,17 +34,17 @@
                 $arrData['session3rd']= $session3rd;
                 $redis = new \Predis\Client();
                 $redis -> set($session3rd,$arrData['session_key'].$arrData['openid']);
-                $redis -> expire($session3rd,3600);
+                $redis -> expire($session3rd,30);
                 return $session3rd;   
             }else{
-                return 'nothing!';
+                return 'nothing get code!';
             }
         }
         
         public function getSe3(){
             $Request = Request::instance();
             $se3 = $Request  -> get('se3');
-            if( isset($se3) && $se3 != '' ) {
+            if( isset($se3) && $se3 !== '' ) {
                 $redis = new \Predis\Client();
                 $se3 = $redis -> get($se3);
                 if( $se3 !== null ){
@@ -59,7 +61,7 @@
             $appid = 'wxe41c158180274a2c'; 
             $Request = Request::instance();
             $rawData = $Request -> get('rawData');
-            if ( isset($rawData) && $rawData != '' ){
+            if ( isset($rawData) && $rawData !== '' ){
                 $sessionKey = $Request -> get('sessionKey');
                 $signature = $Request -> get('signature');
                 $encryptedData = $Request -> get('encryptedData');
@@ -74,10 +76,21 @@
                        return $errcode;
                     }
                 }else{
-                    return 'signature no same!';
+                    return 'false';
                 }
             }
-        }        
+        } 
+        
+        public function uploadImg(){  //七牛云接入测试
+            $bucket = 'wxuploadphoto';
+            $accessKey = 'JGZz1FtUaPP7OX9O8mjnkc1Tu5YO3ofslYF2hM5J';
+            $secretKey = 'cEsLVq3-81hpDI-fUVNsTIkG95cma0ajmhQKdh13';
+            $auth = new Auth($accessKey, $secretKey);
+            $upToken = $auth->uploadToken($bucket, null, 3600);
+            $this -> assign('uploadtoken',$upToken);
+            return $this -> fetch('uploadImg');
+        }
+        
     }
         
   
